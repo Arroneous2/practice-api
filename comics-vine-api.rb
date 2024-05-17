@@ -1,5 +1,9 @@
-require 'http'
-class ComicVineAPI
+class ComicVineCharacters
+  require 'http'
+
+  def initialize()
+    @api_key = ""
+  end
 
   def get_characters_json
     # Define your Comic Vine API key
@@ -37,7 +41,7 @@ class ComicVineAPI
 
     # Parameters for the API request
     params = {
-      api_key: api_key,
+      api_key: @api_key,
       format: 'json',
       resources: "character",
       query: query_params
@@ -97,7 +101,7 @@ end
 
 # Fetch and display characters
 puts "Fetching characters from Comic Vine API..."
-character_search = ComicVineAPI.new().get_character_json("Spider Man")
-specific_character = ComicVineAPI.get_specific_character(character_search)
+character_search = ComicVineCharacters.new().get_character_json("Spider Man")
+specific_character = ComicVineCharacters.new().get_specific_character(character_search)
 
-p ComicsVineAPI.display_info_parameters(specific_character)
+p ComicVineCharacters.new().display_info_parameters(specific_character)
