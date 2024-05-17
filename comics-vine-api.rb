@@ -13,7 +13,7 @@ class ComicVineCharacters
 
     # Parameters for the API request
     params = {
-      api_key: api_key,
+      api_key: @api_key,
       format: 'json'
     }
 
