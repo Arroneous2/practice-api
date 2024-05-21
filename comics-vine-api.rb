@@ -68,7 +68,14 @@ class ComicVineCharacters
     response = HTTP.get(url)
 
     if response.code == 200
-      return JSON.parse(response.to_s)['results']
+      results = JSON.parse(response.to_s)['results']
+      if results.length == 0
+        p "No results found"
+      elsif results.length == 1
+        return ressults[0]
+      else
+        get_specific_search(results)
+      end
     else
       puts "Failed to fetch #{resource_searched}. Error: #{response.code}"
     end
@@ -118,8 +125,7 @@ end
 
 #Fetch and display characters
 puts "Fetching characters from Comic Vine API..."
-character_search = ComicVineCharacters.new().get_search_json()
-specific_search = ComicVineCharacters.new().get_specific_search(character_search)
+specific_search = ComicVineCharacters.new().get_search_json()
 specific_search_display = ComicVineCharacters.new().display_character_by_parameters(specific_search)
 p specific_search_display
 
