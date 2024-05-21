@@ -35,50 +35,67 @@ class ComicVineCharacters
     end
   end
 
-  def get_character_json(query_params)
+  def get_search_json()
     # Endpoint URL for retrieving characters
-    characters_url = "https://comicvine.gamespot.com/api/search/"
+    search_url = "https://comicvine.gamespot.com/api/search/"
+
+    resources = ["character", "concept", "origin", "object", "location", "issue", "story_arc", "volume", "publisher", "person", "team", "video"]
+    p "Here are a list of searchable resrources from Comic Vine."
+    p resources
+    p "Please enter in what you'd like to search"
+    resource_searched = gets.chomp
+
+    while !resources.include?(resource_searched)
+      p "That specific resource doesn't seem to be listed"
+      p resources
+      p "Please enter in what you'd like to search"
+      resource_searched = gets.chomp
+    end
+
+    p "Enter what you would like to search #{resource_searched} for:"
+    search_term = gets.chomp
+
 
     # Parameters for the API request
     params = {
       api_key: @api_key,
       format: 'json',
-      resources: "character",
-      query: query_params
+      resources: resource_searched,
+      query: search_term
     }
 
-    url = "#{characters_url}?#{URI.encode_www_form(params)}"
+    url = "#{search_url}?#{URI.encode_www_form(params)}"
     response = HTTP.get(url)
 
     if response.code == 200
       return JSON.parse(response.to_s)['results']
     else
-      puts "Failed to fetch characters. Error: #{response.code}"
+      puts "Failed to fetch #{resource_searched}. Error: #{response.code}"
     end
   end
 
-  def get_specific_character(characters_search)
-    p "There exist multiple characters of the same name."
-    p "Please enter in the name of a specific character from the list:"
+  def get_specific_search(search)
+    p "There exist multiple results of the same name."
+    p "Please enter in the name of a specific result from the list:"
     
-    character_names = []  
-    characters_search.each {|character|
-      character_names.push(character["name"])
+    search_names = []  
+    search.each {|result|
+      search_names.push(result["name"])
     }
-    p character_names
+    p search_names
 
-    specific_character = gets.chomp
-    while !character_names.include?(specific_character)
+    specific_search = gets.chomp
+    while !search_names.include?(specific_search)
       p "That specific character doesn't seem to be listed"
-      p character_names
+      p search_names
       p "Please enter in the name of a specific character from the list:"
-      specific_character = gets.chomp
+      specific_search = gets.chomp
     end
 
-    return characters_search[character_names.index(specific_character)]
+    return search[search_names.index(specific_search)]
   end
 
-  def display_info_parameters(specific_character)
+  def display_character_by_parameters(specific_character)
     p "Would you like a custom, default, or complete display of information on your character:"
 
     request = gets.chomp
@@ -99,9 +116,10 @@ class ComicVineCharacters
   end
 end
 
-# Fetch and display characters
+#Fetch and display characters
 puts "Fetching characters from Comic Vine API..."
-character_search = ComicVineCharacters.new().get_character_json("Spider Man")
-specific_character = ComicVineCharacters.new().get_specific_character(character_search)
+character_search = ComicVineCharacters.new().get_search_json()
+specific_search = ComicVineCharacters.new().get_specific_search(character_search)
+specific_search_display = ComicVineCharacters.new().display_character_by_parameters(specific_search)
+p specific_search_display
 
-p ComicVineCharacters.new().display_info_parameters(specific_character)
